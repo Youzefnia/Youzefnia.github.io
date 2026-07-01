@@ -1,63 +1,69 @@
 # Design System — Arash Youzefnia Portfolio
 
-Documents the design as currently built (`styles.css`). This was written before the impeccable skill was set up, so it follows general clean-minimal conventions rather than impeccable's brand-register playbook — see "Known gaps" below.
+"Field notes" — a hybrid of a scientist's lab notebook and a builder's terminal log, reflecting the actual pivot the site describes (medical writing/research → building software with AI). Redesigned 2026-07-01 as a bolder pass off the original generic-SaaS build (light theme, Inter, blue accent, pill buttons — see "Superseded" below).
 
-## Tokens (CSS custom properties, `:root`)
+## Tokens (CSS custom properties, `:root`, OKLCH)
 
 | Token | Value | Use |
 |---|---|---|
-| `--bg` | `#fafaf9` | Page background |
-| `--bg-alt` | `#f1f1ef` | Alternating section background (Journey, Contact) |
-| `--surface` | `#ffffff` | Cards, panels |
-| `--text` | `#1c1c1a` | Primary text |
-| `--text-muted` | `#6b6b66` | Secondary/body copy |
-| `--border` | `#e4e3df` | Hairline borders |
-| `--accent` | `#2563eb` | Links, badges, hover states |
-| `--accent-soft` | `#eaf0fe` | "In Progress" badge background |
-| `--radius` | `14px` | Card corner radius |
-| `--max-width` | `1040px` | Content container width |
-| `--font` | Inter (Google Fonts) → system sans fallback | All text |
+| `--ink` | `oklch(0.17 0.02 55)` | Page background — warm dark ink, not navy-tech |
+| `--ink-alt` | `oklch(0.205 0.022 55)` | Alternating section background (Journey, Contact) |
+| `--surface` | `oklch(0.23 0.024 55)` | Cards, panels |
+| `--surface-2` | `oklch(0.28 0.026 55)` | Reserved for nested/hover surfaces |
+| `--border` | `oklch(0.34 0.02 55)` | Hairline borders |
+| `--text` | `oklch(0.92 0.014 75)` | Primary text — warm paper-white |
+| `--text-muted` | `oklch(0.72 0.02 70)` | Secondary/body copy |
+| `--amber` | `oklch(0.78 0.15 85)` | Active-state signal: links, primary buttons, hover, "In Progress" |
+| `--amber-soft-bg` / `--amber-soft-text` | `oklch(0.30 0.05 85)` / `oklch(0.86 0.13 88)` | "In Progress" badge |
+| `--teal` | `oklch(0.75 0.12 190)` | Dormant-state signal: "Coming Soon", completed-cert marker |
+| `--teal-soft-bg` / `--teal-soft-text` | `oklch(0.28 0.045 190)` / `oklch(0.84 0.10 190)` | "Coming Soon" badge |
+| `--radius` | `6px` | Card corner radius (was 14px — sharper, less "generic SaaS pill") |
+| `--radius-sm` | `4px` | Button/badge corner radius |
+| `--max-width` | `1040px` | Content container width (unchanged) |
+| `--font-display` | Fraunces (serif, opsz/ital axes) | H1–H3, logo |
+| `--font-body` | IBM Plex Sans | Body copy |
+| `--font-mono` | IBM Plex Mono | Nav labels aren't mono, but buttons, badges, meta lines, footer, terminal-tag, repo-path, fact labels |
 
-Colors are plain hex, not OKLCH — a gap against impeccable's "new projects" guidance (not retrofitted since the palette predates this skill setup).
+Color strategy: **full palette** (ink neutral + amber + teal, 3 named roles) — earns it because the content itself has two real status states (in-progress vs. coming-soon) that the two accents map onto directly, not decoration for its own sake.
+
+All contrast pairs verified ≥7:1 (body/muted text, both badge variants, both accent-on-ink uses) — see verification method note at bottom.
 
 ## Type scale
-- H1 (hero): `clamp(2.4rem, 6vw, 3.6rem)`, weight 800, letter-spacing -0.02em
-- H2 (section): `clamp(1.7rem, 3vw, 2.2rem)`, weight 800
-- H3 (card titles): `1.2rem`, weight 800
-- Body: `1rem`, line-height 1.6, `--text-muted`
-- Eyebrow ("Portfolio" over hero only): uppercase, 0.78rem, letter-spacing 0.12em — used once, not repeated per-section
+- H1 (hero): `clamp(2.6rem, 6.4vw, 4.2rem)`, Fraunces weight 600, letter-spacing -0.01em (serif needs less negative tracking than the old grotesk sans did)
+- H2 (section): `clamp(1.8rem, 3.2vw, 2.4rem)`, Fraunces 600
+- H3 (card/row titles): `1.2–1.35rem`, Fraunces 600
+- Body: `1rem`, IBM Plex Sans, line-height 1.6, `--text-muted`
+- Terminal-tag (hero, replaces old generic "Portfolio" eyebrow): IBM Plex Mono, `> status: building with AI` — used once, meaningful text rather than a placeholder label, not repeated per-section (avoids the eyebrow-on-every-section tell)
+- `.about-text em` (wraps "vibe coding") set in Fraunces italic, amber — reuses existing markup, no HTML restructuring needed
 
 ## Components
-- **Buttons**: pill-shaped (`border-radius: 999px`), two variants — `.btn-primary` (solid dark, accent on hover) and `.btn-ghost` (outlined)
-- **Course rows** (`.course-row`, Journey section): editorial list, not cards — no surface/border/radius, just a hairline `border-top` divider between rows, title + badge on one baseline-aligned row
-- **Project cards** (`.project-card`, Projects section): white surface, 1px border, 14px radius, lift + shadow on hover — kept as cards here specifically because each one is an external GitHub link, where the card affordance earns its keep
-- **Badges**: pill labels — `.badge-progress` (`#1d4ed8` on accent-soft) for "In Progress", `.badge-soon` (`#8a5a06` on soft amber) for "Coming Soon" — colors darkened from initial build for contrast margin (~5.4–5.9:1, was borderline ~4.52:1)
-- **About facts panel**: bordered surface block with label/value rows
+- **Buttons**: sharp `--radius-sm` (4px) rectangles, IBM Plex Mono label — `.btn-primary` (amber fill, ink text) and `.btn-ghost` (outlined) — deliberately not pill-shaped, per the prior design's own "Known gaps" note
+- **Badges**: `[ bracketed ]` mono tags via `::before`/`::after` content (decorative, not in accessible text) — amber for "In Progress" (active), teal for "Coming Soon" (dormant); colors chosen to map onto the content's actual two-state model
+- **Course rows** (`.course-row`, Journey): unchanged structure — editorial list, hairline divider, no card/surface
+- **Project cards** (`.project-card`, Projects): unchanged structure (white→dark surface swap), now each carries a `.repo-path` mono caption showing the real GitHub path — functional, not decorative
+- **About facts panel**: unchanged structure, labels now mono uppercase
 
 ## Motion
-- Scroll-reveal via `IntersectionObserver`: `.reveal` elements fade + translateY(16px→0) on first intersect, `threshold: 0.1`, unobserves after firing (one-shot)
-- **Visible-by-default architecture**: `.reveal` is `opacity: 1` unless both `.js` is present on `<html>` (added by a synchronous inline script in `<head>`, so it's absent if JS fails/is blocked) and `prefers-reduced-motion: no-preference` matches. No-JS and reduced-motion users always get full content immediately, never a gated/blank state.
-- `scroll-behavior: smooth` is likewise gated behind `prefers-reduced-motion: no-preference`.
-- **Staggered reveals**: items within `.course-row` and `.project-card` groups get incremental `transition-delay` (0/90/180ms via `nth-child`) instead of the whole group fading in as one block — avoids the "uniform reflex" of identical simultaneous entrances.
-- Easing uses `cubic-bezier(0.25, 1, 0.5, 1)` (ease-out-quart-ish), not the bare `ease` keyword.
-- Hover states: button lift (`translateY(-2px)`), card lift (`translateY(-4px)` + shadow), all on `transform`/simple properties
+Unchanged from the prior audit/polish passes — same architecture, just re-themed:
+- Scroll-reveal via `IntersectionObserver`, visible-by-default architecture (`.reveal` opacity:1 unless `.js` + `prefers-reduced-motion: no-preference` both hold)
+- Staggered reveals within `.course-row`/`.project-card` groups
+- `scroll-behavior: smooth` gated behind `prefers-reduced-motion: no-preference`
+- Easing switched to `cubic-bezier(0.16, 1, 0.3, 1)` (ease-out-expo) from the previous ease-out-quart-ish curve
+- No new animated elements added (the terminal-tag cursor is a static `>` glyph, not an animated blink, to avoid any blinking-content concern)
 
 ## Layout
-- Single `.container` (max-width 1040px) reused across all sections
-- Sticky header with blur backdrop
-- `.card-grid` (Projects only): `repeat(auto-fit, minmax(260px, 1fr))` — responsive without explicit breakpoints
-- `.course-list` (Journey): flex column, hairline dividers, no grid — deliberately distinct from `.card-grid` so the two sections don't read as the same repeated widget
-- Section padding varies per section instead of one repeated value: hero 96/72, About 88/96, Journey 96, Projects 80/96, Contact 104/112 (top/bottom)
-- One explicit breakpoint at 760px: collapses nav to hamburger, About grid to single column
-- Mobile nav toggle is a 44×44px tap target (was 32×32px)
+Unchanged from prior passes: single `.container` (1040px), sticky blurred header, `.card-grid` auto-fit grid for Projects, `.course-list` flex column for Journey, per-section padding rhythm, one breakpoint at 760px collapsing nav to hamburger. A subtle 48px repeating-linear-gradient grid texture (graph-paper feel, ~3% opacity) was added to the body background — decorative only, doesn't affect any text contrast since it sits behind, not through, text.
 
-## Known gaps vs. impeccable guidance
-1. **Colors in hex, not OKLCH** — fine functionally, but not following the "new projects" OKLCH guidance. Low priority: would be a non-visual refactor since the palette is already committed/live.
-2. **Generic SaaS aesthetic at the token level** — light theme, Inter, blue accent, pill buttons. The `audit`/`polish` passes broke up the repeated card-grid structure and added rhythm/stagger, but the underlying color/type choices are still a safe default rather than something distinctly *Arash's*. Candidate for a `bolder` pass if he wants more identity.
-3. Photo/headshot still a placeholder gap (no image yet) — noted in PRODUCT.md next steps too.
+## Known gaps vs. impeccable guidance (resolved by this pass)
+1. ~~Colors in hex, not OKLCH~~ — now fully OKLCH.
+2. ~~Generic SaaS aesthetic~~ — replaced with a palette/type/component system tied to the site's own subject matter (science → code pivot) rather than a safe default.
+3. Photo/headshot still a placeholder gap — unchanged, still open (see PRODUCT.md next steps).
 
-Resolved by the `audit` pass (2026-06-30): reveal-gating blank-content bug, missing `prefers-reduced-motion`, borderline badge contrast, undersized mobile nav-toggle tap target.
-Resolved by this `polish` pass (2026-06-30): identical card grids across Journey/Projects, uniform-block (non-staggered) reveals, flat section-padding rhythm, missing `text-wrap: balance`/`pretty`.
+## Superseded
+The pre-2026-07-01 build used Inter, a light `#fafaf9` background, a flat blue `#2563eb` accent, and pill-shaped (`border-radius: 999px`) buttons/badges. That version's own DESIGN.md flagged itself as a "generic SaaS aesthetic... candidate for a bolder pass" — this redesign is that pass.
+
+## Contrast verification method
+Pairs were checked with a standalone OKLCH→sRGB→WCAG-relative-luminance script (Björn Ottosson's OKLab matrices + standard WCAG contrast formula), not by eye. All text pairs landed between 7.2:1 and 15.1:1 against their backgrounds — comfortably above the 4.5:1 body-text floor with margin for future tweaks.
 
 ## Live
 - https://youzefnia.github.io/
