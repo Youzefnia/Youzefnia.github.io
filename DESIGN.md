@@ -59,6 +59,20 @@ Unchanged from prior passes: single `.container` (1040px), sticky blurred header
 2. ~~Generic SaaS aesthetic~~ — replaced with a palette/type/component system tied to the site's own subject matter (science → code pivot) rather than a safe default.
 3. Photo/headshot still a placeholder gap — unchanged, still open (see PRODUCT.md next steps).
 
+## Polish pass (2026-07-01, professional/QA pass)
+Applied against a general UI/UX checklist (accessibility, touch targets, layout safety, navigation) as a hardening pass on top of the redesign above — no visual direction change, only completeness fixes:
+- Added a `.skip-link` ("Skip to main content") for keyboard users — real gap, wasn't present before.
+- Added `favicon.svg` (dark ink square + amber `>` glyph, matches the terminal-tag motif) — browser tab/bookmark now has an identity instead of a blank page icon.
+- Added Open Graph / Twitter meta tags (title, description, url) so shared links (recruiters, course communities) get a proper preview card instead of nothing.
+- `.nav a` gained explicit padding and `min-height: 44px` in the mobile flyout — the previous tap target was just line-height (~24px), under the 44px touch minimum.
+- `.repo-path` gained `overflow-wrap: anywhere` — long repo paths (e.g. `MD-Simiulation-Analysis`) could overflow a narrow 260px card without it.
+- Added inline SVG icons (mail envelope, GitHub mark) to the two primary contact buttons — icon+text per the site's existing "no emoji, one consistent icon style" discipline; nothing else on the page needed icons.
+- Added scrollspy: the current section's nav link gets `.is-active` (amber) via `IntersectionObserver` on the sections, with a `scroll`-based bottom-of-page fallback since the last section's top edge never crosses the observer's trigger line once the page can't scroll further (a real edge-case bug caught and fixed during this pass, not shipped).
+- Tokenized the one remaining raw color value (`--amber-hover`) that had snuck into `.btn-primary:hover` as a literal `oklch(...)` instead of a named variable.
+- `touch-action: manipulation` added to buttons/nav/card-links to cut mobile tap delay.
+
+Note on testing: verifying the scroll-reveal in this environment's automated browser required forcing `.is-visible` via console, because the automation's Chrome window runs backgrounded/occluded and `document.hidden` throttles `IntersectionObserver` there — not a real-user condition (a user's tab is always foreground while they're actively scrolling it), and not a regression in the reveal architecture itself.
+
 ## Superseded
 The pre-2026-07-01 build used Inter, a light `#fafaf9` background, a flat blue `#2563eb` accent, and pill-shaped (`border-radius: 999px`) buttons/badges. That version's own DESIGN.md flagged itself as a "generic SaaS aesthetic... candidate for a bolder pass" — this redesign is that pass.
 
